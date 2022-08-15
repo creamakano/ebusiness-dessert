@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.mapper.FocusMapper">
+
+    <select id="getMyFocusGoodsInfo" resultType="com.lyj.entity.Goods">
+        select gs.* from t_goods gs,t_focus fo
+            where fo.goods_id=gs.id and fo.user_id=#{userId}
+    </select>
+
+
+</mapper>
+
+
+

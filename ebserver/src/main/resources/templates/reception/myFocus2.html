@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{/}"><!-- 不用base就使用th:src="@{/js/jquery.min.js} -->
+<meta charset="UTF-8">
+<title>收藏页面</title>
+	<style>
+		body{
+			background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+			background-size: 100%;
+		}
+	</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+</head>
+<body>
+<div th:include="reception/header"></div>
+<div class="container">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">收藏列表</h3>
+		</div>
+		<div class="panel-body">
+			<div class="table table-responsive">
+				<table class="table table-bordered table-hover">
+					<tbody class="text-center" id="tbody1">
+						<tr>
+							<th>商品图片</th>
+							<th>商品名称</th>
+							<th>原价</th>
+							<th>现价</th>
+							<th>操作</th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script>
+	$(function (){
+		$.get("/getMyFocusData",function (data){
+			var arr = data.data;
+			for(var i =0 ; i<arr.length ;i++){
+				// th:href="@{/goodsDetail(id='+arr[i].id+')}"
+				var tr='<tr>' +
+						'<td>' +
+						'<a href="goodsDetail?id='+arr[i].id+'">' +
+						'<img src="images/'+arr[i].goodsPicture +'"'+
+						'style="height: auto; width: 20%;">' +
+						'</a>' +
+						'</td>' +
+						'<td>'+arr[i].goodsName+'</td>' +
+						'<td>'+arr[i].goodsOrPrice+'</td>' +
+						'<td>'+arr[i].goodsRuPrice+'</td>' +
+						'<td><a href="deleteFocus?id='+arr[i].id+'">删除</a></td>'+
+
+				'</tr>';
+				$("#tbody1").append(tr);
+			}
+		},"json")
+	})
+</script>
+</html>

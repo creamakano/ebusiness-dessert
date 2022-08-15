@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.mapper.OrderDetailMapper">
+
+    <resultMap id="orderDetailGoods" type="orderDetail">
+        <result property="orderDetailId" column="orderDetail_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="nums" column="nums"/>
+        <association property="goods" javaType="goods">
+            <result property="goodsName" column="goods_name"/>
+            <result property="goodsOrPrice" column="goods_or_price"/>
+            <result property="goodsRuPrice" column="goods_ru_price"/>
+            <result property="goodsPicture" column="goods_picture"/>
+        </association>
+    </resultMap>
+    <select id="selectOrderDetailByOrderId" resultMap="orderDetailGoods">
+        select od.* , g.goods_name ,g.goods_or_price ,g.goods_ru_price,g.goods_picture
+            from t_orderdetail od ,t_goods g where od.goods_id = g.id and od.order_id = #{orderId}
+    </select>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.mapper.CommentMapper">
+
+    <resultMap id="GoodsWithNums" type="com.lyj.entity.OrderDetail">
+        <result property="orderDetailId" column="orderDetail_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="nums" column="nums"/>
+        <association property="goods" javaType="com.lyj.entity.Goods">
+            <result property="goodsName" column="goods_name"/>
+            <result property="goodsOrPrice" column="goods_or_price"/>
+            <result property="goodsRuPrice" column="goods_ru_price"/>
+            <result property="goodsPicture" column="goods_picture"/>
+        </association>
+        <association property="order" javaType="com.lyj.entity.Order">
+            <result property="createDate" column="create_date"/>
+            <result property="modifyDate" column="modify_date"/>
+            <result property="receiptInfo" column="receipt_info"/>
+            <association property="address" javaType="com.lyj.entity.Address">
+                <result property="addressInfo" column="address_info"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <resultMap id="commentWithUserEmail" type="com.lyj.entity.Comment">
+        <result property="commentId" column="comment_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="content" column="content"/>
+        <result property="createDate" column="create_date"/>
+        <association property="user" javaType="com.lyj.entity.User">
+            <result property="userEmail" column="user_email"/>
+        </association>
+    </resultMap>
+
+    <select id="commentGoodsList" resultMap="GoodsWithNums">
+        select d.* , g.* ,o.*  from t_goods g , t_orderdetail d,t_order o
+        where d.order_id = #{orderId} and d.goods_id = g.id
+          and d.order_id = o.order_id
+          and d.goods_id not in (SELECT goods_id from t_comment where order_id = #{orderId})
+    </select>
+    <select id="selectGoodsByOrderIdAndGoodsId" resultMap="GoodsWithNums">
+        select d.* , g.* ,o.* from t_goods g , t_orderdetail d,t_order o
+        where d.order_id = #{orderId} and d.goods_id = g.id
+          and d.order_id = o.order_id and d.goods_id = #{goodsId}
+    </select>
+
+
+
+    <select id="selectAllCommentByPage" resultMap="commentWithUserEmail">
+        select c.* , u.user_email from t_comment c ,t_user u , t_order o
+        where c.order_id = o.order_id and o.user_id = u.user_id
+        limit #{index} , #{size}
+    </select>
+
+
+    <select id="selectCommentByGoodsId" resultMap="commentWithUserEmail">
+        select co.* , u.user_email from t_comment co ,t_user u ,t_order o
+        where co.goods_id = #{goodsId} and co.order_id = o.order_id
+          and o.user_id = u.user_id
+    </select>
+</mapper>

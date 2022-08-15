@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.mapper.OrderMapper">
+
+    <resultMap id="orderUser" type="order">
+        <result property="orderId" column="order_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="status"  column="status"/>
+        <result property="addressId" column="address_id"/>
+        <result property="createDate" column="create_date"/>
+        <result property="modifyDate" column="modify_date"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="isComment" column="is_comment"/>
+        <result property="receiptInfo" column="receipt_info"/>
+        <association property="user" javaType="user">
+            <result property="userEmail" column="user_email"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="orderAddress" type="order">
+        <result property="orderId" column="order_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="status"  column="status"/>
+        <result property="addressId" column="address_id"/>
+        <result property="createDate" column="create_date"/>
+        <result property="modifyDate" column="modify_date"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="isComment" column="is_comment"/>
+        <association property="address" javaType="address">
+            <result property="addressInfo" column="address_info"/>
+        </association>
+    </resultMap>
+
+    <select id="selectOrderByPage" resultMap="orderUser">
+        select o.* , u.user_email
+            from t_order o , t_user u
+            where o.user_id = u.user_id
+            limit #{index}, #{size}
+    </select>
+
+    <select id="selectAllOrderWithAddressInfoByUid" resultMap="orderAddress">
+        select o.* , a.* from t_order o , t_address a where o.address_id = a.address_id and o.user_id = #{uid}
+    </select>
+
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.mapper.GoodsMapper">
+
+    <select id="selectGoodsByPage" resultType="Goods">
+        select g.* , gt.type_name as type_name  from t_goods g, t_goodsType gt
+        where g.goods_type_id = gt.id limit #{index} , #{size}
+    </select>
+
+    <update id="updateStore">
+        update t_goods set goods_store= goods_store - #{nums} where id= #{goodsId}
+    </update>
+
+    <select id="selectGoodsByLikeName" resultType="Goods">
+        SELECT * from t_goods
+        where (goods_name like '%${name}' or  goods_name like '%${name}%'
+           or  goods_name like '${name}%') and is_advertisement=0
+    </select>
+    <select id="selectRecommendGoodsByLikeName" resultType="Goods">
+        SELECT * from t_goods
+        where (goods_name like '%${name}' or  goods_name like '%${name}%'
+           or  goods_name like '${name}%') and is_recommend=1
+    </select>
+</mapper>

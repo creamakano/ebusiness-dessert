@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}"><!-- 不用base就使用th:src="@{/js/jquery.min.js} -->
+    <meta charset="UTF-8">
+    <title>结算页面</title>
+    <style>
+        body{
+            background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+            background-size: 100%;
+        }
+        td{
+            text-align: center;
+        }
+        .modal-title {
+            margin-bottom: 0;
+            line-height: 1.5;
+            font-size: 24px;
+        }
+
+        .addr {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .addr:hover {
+            background-color: #d2d2d2;
+        }
+    </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <script src="../layui/layui.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script th:inline="javascript">
+        function opAddr() {
+            $('#exampleModal').modal('toggle');
+
+            $.get("/getAddress", function (data) {
+                var obj = data.data;
+                $('#addr-body').empty();
+                for (let i = 0; i < obj.length; i++) {
+                    let item = obj[i];
+                    var consigneeInfo = item.consigneeName +"  "+item.phoneNum+" "+item.addressInfo;
+                    $('#addr-body').append(
+                        '<tr class="addr" onclick="selectAddr(\'' + consigneeInfo + '\',' + ')">' +
+                        '    <td>' + item.consigneeName + '</td>' +
+                        '    <td>' + item.phoneNum + '</td>' +
+                        '    <td>' + item.addressInfo + '</td>' +
+                        '    <td>' + (item.isDefault == 1 ? '是' : '否') + '</td>' +
+                        '</tr>'
+                    );
+
+                }
+
+            }, "json")
+
+        }
+
+        function selectAddr(addr) {
+            console.log(addr);
+            $('#addr').html(addr);
+            $('#exampleModal').modal('toggle');
+            $('#submitAddressId').val(addr);
+        }
+
+        $(function (){
+            $("#checkStore").click(function (){
+                var receiptInfo = $("#submitAddressId").val();
+                $.get("/checkStore",{"receiptInfo":receiptInfo},function (data){
+                    if(data.code == 200){
+                        $("#countForm").submit();
+                    }else {
+                        layer.msg(data.message);
+                    }
+                },"json")
+            })
+
+        })
+
+    </script>
+</head>
+<body>
+<div th:include="reception/header"></div>
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">购物车列表</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table table-responsive">
+                <table class="table table-bordered table-hover">
+                    <tbody class="text-center">
+                    <tr>
+                        <th>商品信息</th>
+                        <th>商品名称</th>
+                        <th>单价（元）</th>
+                        <th>数量</th>
+                        <th>小计</th>
+                    </tr>
+                    <tr th:each="cart:${carts}">
+                        <td>
+                            <a th:href="@{/goodsDetail(id=${cart.goodsId})}">
+                                <img th:src="'images/' + ${cart.goods.goodsPicture}"
+                                     style="height: 50px; width: 50px; justify-content: center;align-items: center;">
+                            </a>
+                        </td>
+                        <td th:text="${cart.goods.goodsName}"></td>
+                        <td th:text="${cart.goods.goodsRuPrice}"></td>
+                        <td th:text="${cart.nums}"></td>
+                        <td th:text="${cart.nums}*${cart.goods.goodsRuPrice}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div style="color: #a60401; font-size: 13px; font-weight: bold; letter-spacing: 0px;" th:if="${flag}==1">
+                                收货信息:<a href="javascript:opAddr()" id="addr" th:text="${defaultAddress.consigneeName+' '+defaultAddress.phoneNum+' '+defaultAddress.addressInfo}"></a>
+                                <input type="hidden"  id="addressId" th:value="${defaultAddress.consigneeName+' '+defaultAddress.phoneNum+' '+defaultAddress.addressInfo}" placeholder="请选择地址">
+                            </div>
+                            <div style="color: #a60401; font-size: 13px; font-weight: bold; letter-spacing: 0px;" th:if="${flag}==0">
+                                请完善您的收货地址信息
+                                <input type="hidden"  id="addressId"  placeholder="请选择地址">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <font style="color: #a60401; font-size: 13px; font-weight: bold; letter-spacing: 0px;">
+                                购物金额总计(不含运费) ￥&nbsp;<span th:text="${total}"></span>元
+                            </font>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <form id="countForm" action="/submitOrder">
+                                <input th:type="hidden" name="totalPrice" id="total" th:value="${total}">
+                                <input th:type="hidden" name="orderName" id="orderName" th:value="${orderGoodsName}">
+                                <input th:type="hidden" name="receiptInfo" id="submitAddressId" th:value="${defaultAddress.addressInfo}+' '+${defaultAddress.consigneeName}+' '+${defaultAddress.phoneNum}">
+                                <input th:if="${flag}==1" id="checkStore" type="button" value="提交订单">
+                                <input th:if="${flag}==0" readonly type="button" value="请完善您的收货地址信息">
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border: 6px solid; border-color: #dd7e6b;">
+            <div class="modal-header" style="border-bottom: 2px dotted #dd7e6b;">
+                <h5 class="modal-title" style="margin-bottom: 0;line-height: 1.5;font-size: 24px;color: #dd7e6b;border-radius: 1mm;
+						text-align: center;width: 200px;border-color: #dd7e6b;border-bottom: 3px solid;align-content: center;margin: 0 auto;">我的地址</h5>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">收货人</th>
+                        <th scope="col">电话</th>
+                        <th scope="col">地址</th>
+                        <th scope="col">是否默认</th>
+                    </tr>
+                    </thead>
+                    <tbody id="addr-body">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="color: #dd7e6b">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{/}">
+<meta charset="UTF-8">
+<title>主页</title>
+	<style>
+		body{
+			background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+			background-size: 100%;
+		}
+	</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript" th:inline="javascript">
+
+	</script>
+</head>
+<body>
+	<!-- 加载header.html -->
+	<div th:include="backstage/header"></div>
+	<br><br><br>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">商品列表</h3>
+			</div>
+			<div class="panel-body">
+				<div class="table table-responsive">
+					<table class="table table-bordered table-hover">
+						<tbody class="text-center">
+							<tr>
+								<th>商品ID</th>
+								<th>商品名称</th>
+								<th>商品类型</th>
+								<th>详情</th>
+								<th th:if="${act} == 'updateSelect'">操作</th>
+								<th th:if="${act} == 'deleteSelect'">操作</th>
+							</tr>
+							<tr th:each="gds:${goodTypeList}">
+								<td th:text="${gds.id}"></td>
+								<td th:text="${gds.goodsName}"></td>
+								<td th:text="${gds.typeName}"></td>
+								<td>
+									<a th:href="@{goods/detail(id=${gds.id},act=detail)}" >详情</a>
+								</td>
+								<td th:if="${act} == 'updateSelect'">
+									<a th:href="@{goods/detail(id=${gds.id},act=update)}" >修改</a>
+								</td>
+								<td th:if="${act} == 'deleteSelect'">
+									<a th:href="@{goods/deleteGoodsById(id=${gds.id})}" >删除</a>
+								</td>
+							</tr>
+							<tr th:if="${act} == 'select'">
+								<td colspan="4" align="right">
+									<ul class="pagination">
+										<li><a>第<span th:text="${currentPage}" ></span>页</a></li>
+										<li><a>共<span th:text="${totalPage}" ></span>页</a></li>
+										<li>
+											<span th:if="${currentPage} != 1" >
+												<a th:href="@{goods/selectAllGoodsByPage(act=select,currentPage=${currentPage - 1})}">上一页</a>
+											</span>
+											<span th:if="${currentPage} != ${totalPage}" >
+												<a th:href="@{goods/selectAllGoodsByPage(act=select,currentPage=${currentPage + 1})}">下一页</a>
+											</span>
+										</li>
+									</ul>
+								</td>
+							</tr>
+							<tr th:if="${act} == 'updateSelect'">
+								<td colspan="5" align="right">
+									<ul class="pagination">
+										<li><a>第<span th:text="${currentPage}" ></span>页</a></li>
+										<li><a>共<span th:text="${totalPage}" ></span>页</a></li>
+										<li>
+											<span th:if="${currentPage} != 1" >
+												<a th:href="@{goods/selectAllGoodsByPage(act=updateSelect,currentPage=${currentPage - 1})}">上一页</a>
+											</span>
+											<span th:if="${currentPage} != ${totalPage}" >
+												<a th:href="@{goods/selectAllGoodsByPage(act=updateSelect,currentPage=${currentPage + 1})}">下一页</a>
+											</span>
+										</li>
+									</ul>
+								</td>
+							</tr>
+							<tr th:if="${act} == 'deleteSelect'">
+								<td colspan="5" align="right">
+									<ul class="pagination">
+										<li><a>第<span th:text="${currentPage}" ></span>页</a></li>
+										<li><a>共<span th:text="${totalPage}" ></span>页</a></li>
+										<li>
+											<span th:if="${currentPage} != 1" >
+												<a th:href="@{goods/selectAllGoodsByPage(act=deleteSelect,currentPage=${currentPage - 1})}">上一页</a>
+											</span>
+											<span th:if="${currentPage} != ${totalPage}" >
+												<a th:href="@{goods/selectAllGoodsByPage(act=deleteSelect,currentPage=${currentPage + 1})}">下一页</a>
+											</span>
+										</li>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

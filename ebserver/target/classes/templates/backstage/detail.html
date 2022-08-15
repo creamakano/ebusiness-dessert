@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{/}">
+<meta charset="UTF-8">
+<title>商品详情页</title>
+	<style>
+		body{
+			background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+			background-size: 100%;
+		}
+	</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+</head>
+<body>
+	<!-- 加载header.html -->
+	<div th:include="backstage/header"></div>
+	<br><br><br>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">商品详情</h3>
+			</div>
+			<div class="panel-body">
+				<div class="table table-responsive">
+					<table class="table table-bordered table-hover">
+						<tbody class="text-center">
+							<tr>
+								<th>商品名称</th>
+								<td th:text="${goods.goodsName}"></td>
+							</tr>
+							<tr>
+								<th>商品类型</th>
+								<td th:text="${goods.typeName}"></td>
+							</tr>
+							<tr>
+								<th>商品原价</th>
+								<td th:text="${goods.goodsOrPrice}"></td>
+							</tr>
+							<tr>
+								<th>商品折扣价</th>
+								<td th:text="${goods.goodsRuPrice}"></td>
+							</tr>
+							<tr>
+								<th>商品库存</th>
+								<td th:text="${goods.goodsStore}"></td>
+							</tr>
+							<tr>
+								<th>商品图片</th>
+								<td>
+									<img th:src="'images/' + ${goods.goodsPicture}"
+										 style="height: 200px;width: auto;">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

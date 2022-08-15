@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<script src="js/jquery.min.js"></script>
+<script src="../layui/layui.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>商品类型添加页面</title>
+    <style>
+        body{
+            background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+            background-size: 100%;
+        }
+        .border1{
+            border: 1px solid #ddd;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+<body>
+<div th:include="backstage/header"></div>
+<br><br><br>
+<div class="container" style="border:1px solid #dd7e6b;background-color: white;height: 300px;margin-top:50px;";>
+    <div class="bg-primary" style="width: 1170px;height: 60px;padding-top: 1px;margin-left: -17px;">
+        <h3 align="center">添加类型</h3>
+    </div>
+    <br>
+    <div class="border1">
+    <form th:action="@{/goods/addGoodsType}" id="addTypeForm" name="myform" method="post"
+          class="form-horizontal" role="form" style="margin-right: -30px;margin-top: 50px;margin-left: 300px;">
+        <div class="form-group has-success">
+            <label class="col-sm-2 col-md-2 control-label">类型名称</label>
+            <div class="col-sm-4 col-md-4">
+                <input type="text" class="form-control"
+                       placeholder="请输入类型名"
+                       name="typeName" id="typeName"/>
+            </div>
+        </div>
+        <div class="form-group" style="margin-top: 40px;margin-left: 10px;">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button id="submitBtn" type="button" class="btn btn-success">添加</button>
+                <button type="reset" class="btn btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+</body>
+
+<script>
+    $("#submitBtn").click(function (){
+        var typeName = $("#typeName").val();
+        $.post("/goods/checkTypeName", {"typeName": typeName}, function (data) {
+            if(data.code==200){
+                $("#addTypeForm").submit();
+            }else {
+                layer.msg(data.message);
+            }
+        }, "json")
+    })
+</script>
+</html>

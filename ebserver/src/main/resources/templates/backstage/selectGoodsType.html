@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{/}">
+<meta charset="UTF-8">
+<title>查询类型页面</title>
+	<style>
+		body{
+			background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+			background-size: 100%;
+		}
+	</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<script src="js/jquery.min.js"></script>
+<script src="../layui/layui.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	function deleteType(id){
+		$.post("/goods/checkDeleteGoodsType",{"id":id},function (data){
+			if(data.code!=200){
+				layer.msg(data.message);
+			}else {
+				window.location.href="/goods/deleteGoodsType?id="+id
+			}
+		},"json")
+	}	;
+</script>
+</head>
+<body>
+	<!-- 加载header.html -->
+	<div th:include="backstage/header"></div>
+	<br><br><br>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">商品类型列表</h3>
+			</div>
+			<div class="panel-body">
+				<div class="table table-responsive">
+					<table class="table table-bordered table-hover">
+						<tbody class="text-center">
+							<tr>
+								<th>类型ID</th>
+								<th>类型名称</th>
+								<th>操作</th>
+							</tr>
+							<tr th:each="gty:${goodTypeList}">
+								<td th:text="${gty.id}"></td>
+								<td th:text="${gty.typeName}"></td>
+								<td>
+									<a th:href="'javascript:deleteType(' + ${gty.id} + ')'">删除</a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3" align="right">
+									<ul class="pagination">
+										<li><a>第<span th:text="${currentPage}" ></span>页</a></li>
+										<li><a>共<span th:text="${totalPage}" ></span>页</a></li>
+										<li>
+											<span th:if="${currentPage} != 1" >
+												<a th:href="'goods/selectAllTypeByPage?currentPage=' + ${currentPage - 1}">上一页</a>
+											</span>
+											<span th:if="${currentPage} != ${totalPage}" >
+												<a th:href="'goods/selectAllTypeByPage?currentPage=' + ${currentPage + 1}">下一页</a>
+											</span>
+										</li>
+									</ul>
+								</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

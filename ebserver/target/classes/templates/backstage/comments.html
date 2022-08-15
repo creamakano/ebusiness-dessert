@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>主页</title>
+        <style>
+            body{
+                background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+                background-size: 100%;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <script src="js/jquery.min.js"></script>
+        <script src="../layui/layui.js"></script>
+        <script type="text/javascript" th:inline="javascript">
+            function deleteComment(id) {
+                $.post("/comment/deleteComment",{commentId: id},function (data){
+                    if(data.code==200){
+                        window.location.href="comment/selectComment?currentPage=1";
+                    }else {
+                        layer.msg(data.message);
+                    }
+                },"json")
+            }
+        </script>
+    </head>
+    <body>
+        <!-- 加载header.html -->
+        <div th:include="backstage/header"></div>
+        <br><br><br>
+        <div class="container">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">评论列表</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <tbody class="text-center">
+                            <tr>
+                                <th>用户</th>
+                                <th>评论</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr th:each="comment:${commentList}">
+                                <td th:text="${comment.user.userEmail}"></td>
+                                <td th:text="${comment.content}"></td>
+                                <td>
+                                    <a th:href="'javascript:deleteComment('+ ${comment.commentId} +')'" >删除</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="right">
+                                    <ul class="pagination">
+                                        <li><a>第<span th:text="${currentPage}" ></span>页</a></li>
+                                        <li><a>共<span th:if="${totalPage} > 0" th:text="${totalPage}" ></span><span th:if="${totalPage} < 1">1</span>页</a></li>
+                                        <li>
+
+                                            <span th:if="${currentPage} != 1" >
+												<a th:href="'comment/selectComment?currentPage=' + ${currentPage - 1}">上一页</a>
+											</span>
+                                            <span th:if="${currentPage} != ${totalPage}" >
+												<a th:href="'comment/selectComment?currentPage=' + ${currentPage + 1}">下一页</a>
+											</span>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

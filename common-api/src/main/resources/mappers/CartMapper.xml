@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyj.mapper.CartMapper">
+    <resultMap id="cartGoods" type="com.lyj.entity.Cart">
+        <result property="cartId" column="cart_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="nums" column="nums"/>
+        <association property="goods" javaType="com.lyj.entity.Goods">
+            <result property="goodsName" column="goods_name"/>
+            <result property="goodsOrPrice" column="goods_or_price"/>
+            <result property="goodsRuPrice" column="goods_ru_price"/>
+            <result property="goodsPicture" column="goods_picture"/>
+        </association>
+    </resultMap>
+    <select id="selectCartInfoByUid" resultMap="cartGoods">
+        select c.* , g.goods_name ,g.goods_or_price ,g.goods_ru_price,g.goods_picture from t_cart c ,t_goods g where c.goods_id = g.id and c.user_id = #{uid}
+    </select>
+</mapper>

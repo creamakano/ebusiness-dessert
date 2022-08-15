@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{/}"><!-- 不用base就使用th:src="@{/js/jquery.min.js} -->
+<meta charset="UTF-8">
+<title>订单详情页面</title>
+	<style>
+		body{
+			background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+			background-size: 100%;
+		}
+	</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+</head>
+<body>
+<div th:include="reception/header"></div>
+<div class="container">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">订单详情</h3>
+		</div>
+		<div class="panel-body">
+			<div class="table table-responsive">
+				<table class="table table-bordered table-hover">
+					<tbody class="text-center">
+						<tr>
+							<th>商品编号</th>
+							<th>商品图片</th>
+							<th>商品名称</th>
+							<th>商品购买价</th>
+							<th>购买数量</th>
+							<th th:if="${status}==1">商品评价</th>
+						</tr>
+						<tr th:each="od:${orderDetailList}">
+							<td th:text="${od.goodsId}"></td>
+							<td>
+								<a th:href="@{/goodsDetail(id=${od.goodsId})}">
+									<img th:src="'images/' + ${od.goods.goodsPicture}"
+										 style="height: 50px; width: 50px;">
+								</a>
+							</td>
+							<td th:text="${od.goods.goodsName}"> </td>
+							<td th:text="${od.goods.goodsRuPrice}"></td>
+							<td th:text="${od.nums}"></td>
+							<td th:if="${status}==1"><a th:href="@{selectMyOrder(orderId=${od.orderId},goodsId=${od.goodsId})}">查看评价</a> </td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

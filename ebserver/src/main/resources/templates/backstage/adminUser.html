@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <style>
+        body{
+            background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+            background-size: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="../layui/layui.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        function setStatus(status, th) {
+            $.post("/back/setStatus",{"id":th.value,"status":status},function (data){
+                if (data.code == 200){
+                    window.location.href= "back/selectAdminUser?currentPage=1";
+                }else {
+                    layer.msg(data.message);
+                }
+            },"json")
+        }
+
+        function opSetting(type, th) {
+            $('#exampleModal').modal('toggle');
+            $('#exampleModal').find('button[name=btn]').val(type);
+            if(type == "setting"){
+                $.post("/back/selectOneAdminUserById",{"id":th.value},function (data){
+                    var obj = data.data;
+                    $('#addrForm').find('input[name=userName]').val(obj.userName);
+                    $('#addrForm').find('input[name=password]').val(obj.password);
+                    $('#addrForm').find('input[name=salary]').val(obj.salary);
+                    $('#addrForm').find('input[name=key]').val(obj.id);
+                    $('#addrForm').find('select[name=isSuper]').val(obj.isSuper);
+                },"json")
+            }else {
+                $('#addrForm').find('input[name=userName]').val("");
+                $('#addrForm').find('input[name=password]').val("");
+                $('#addrForm').find('input[name=salary]').val("");
+                $('#addrForm').find('input[name=key]').val(0);
+                $('#addrForm').find('select[name=isSuper]').val(1);
+            }
+
+        }
+
+        function submit(th) {
+            console.log(th.value);
+            var userName  = $("#adminUserName").val();
+            var password  = $("#adminPwd").val();
+            var salary  = $("#adminSalary").val();
+            var isSuper  = $("#adminIsSuper").val();
+            var key = $("#key").val();
+            $.post("/back/addOrUpdAdminUser",{"act":th.value,"key":key,"userName":userName,"password":password,"salary":salary,"isSuper":isSuper},function (data){
+                if(data.code == 200){
+                    window.location.href = "back/selectAdminUser?currentPage=1";
+                }else {
+                    layer.msg(data.message);
+                }
+            },"json")
+        }
+    </script>
+</head>
+<body>
+<!-- 加载header.html -->
+<div th:include="backstage/header"></div>
+<br><br><br>
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">管理员管理</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table table-responsive">
+                <div class="text-right" style="margin-bottom: 5px">
+                    <button class="btn btn-success" onclick="opSetting('add', this)">添加</button>
+                </div>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>薪资</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    <tr th:each="admin:${adminUserList}">
+                        <td th:text="${admin.userName}"> </td>
+                        <td th:text="${admin.salary}"></td>
+                        <td>
+                            <button class="btn btn-danger"  th:value="${admin.id}" th:if="${admin.status} == 1" onclick="setStatus(0, this)">禁用</button>
+                            <button class="btn btn-success" th:value="${admin.id}" th:if="${admin.status} != 1" onclick="setStatus(1, this)">启用</button>
+
+                            <button class="btn btn-primary" th:value="${admin.id}" onclick="opSetting('setting', this)"> 设置</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" align="right">
+                            <ul class="pagination">
+                                <li><a>第<span th:text="${currentPage}" ></span>页</a></li>
+                                <li><a>共<span th:if="${totalPage} > 0" th:text="${totalPage}" ></span><span th:if="${totalPage} < 1">1</span>页</a></li>
+                                <li>
+                                                <span th:if="${currentPage} != 1" >
+                                                    <a th:href="'back/selectAdminUser?currentPage=' + ${currentPage - 1}">上一页</a>
+                                                </span>
+                                    <span th:if="${currentPage} != ${totalPage}" >
+                                                    <a th:href="'back/selectAdminUser?currentPage=' + ${currentPage + 1}">下一页</a>
+                                                </span>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border: 6px solid; border-color: #dd7e6b;">
+            <div class="modal-header" style="border-bottom: 2px dotted #dd7e6b;">
+                <h5 style="margin-bottom: 0;line-height: 1.5;font-size: 24px;color: #dd7e6b;border-radius: 1mm;
+						text-align: center;width: 200px;border-color: #dd7e6b;border-bottom: 3px solid;align-content: center;margin: 0 auto;" id="exampleModalLabel">管理员信息编辑</h5>
+            </div>
+            <div class="modal-body">
+                <form id="addrForm" action="" method="post" style="width: 170%;text-align: center;">
+                    <div class="form-group row has-success">
+                        <label class="col-sm-2 col-md-2 control-label ">用户名</label>
+                        <div class="col-sm-4 col-md-4">
+                            <input type="text" id="adminUserName" class="form-control" placeholder="请输入管理员名" name="userName">
+                        </div>
+                    </div>
+                    <div class="form-group row has-success">
+                        <label class="col-sm-2 col-md-2 control-label ">密码</label>
+                        <div class="col-sm-4 col-md-4">
+                            <input type="password" id="adminPwd" class="form-control" placeholder="请输入密码" name="password">
+
+                        </div>
+                    </div>
+                    <div class="form-group row has-success">
+                        <label class="col-sm-2 col-md-2 control-label ">薪资</label>
+                        <div class="col-sm-4 col-md-4">
+                            <input type="number" id="adminSalary" class="form-control" placeholder="请输入薪资" name="salary">
+                        </div>
+                    </div>
+                    <div class="form-group row has-success">
+                        <label class="col-sm-2 col-md-2 control-label ">是否为超级管理员</label>
+                        <div class="col-sm-4 col-md-4">
+                            <select id="adminIsSuper" class="custom-select custom-select-lg mb-3" name="isSuper">
+                                <option  value="1">是</option>
+                                <option  value="0">否</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="hidden" id="key" name="key">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">关闭</button>
+
+                <button type="button" class="btn btn-primary" name="btn" onclick="submit(this);">提交</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

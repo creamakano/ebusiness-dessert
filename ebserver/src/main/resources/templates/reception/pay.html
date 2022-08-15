@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<base th:href="@{/}"><!-- 不用base就使用th:src="@{/js/jquery.min.js} -->
+<meta charset="UTF-8">
+<title>支付页面</title>
+	<style>
+		body{
+			background-image: url("http://localhost:8082/images/201910280135559860.jpg");
+			background-size: 100%;
+		}
+		.border1{
+			border: 1px solid #ddd;
+		}
+		input{
+			font-color: #a60401;
+		}
+	</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	/*function pay(){
+			$.ajax(
+				{
+					//请求路径，要注意的是url和th:inline="javascript"
+					url : [[@{/cart/pay}]],
+					//请求类型
+					type : "post",
+					contentType : "application/json",
+					//data表示发送的数据
+					data : JSON.stringify({
+						id : $("#oid").text()
+					}),
+					//成功响应的结果
+					success : function(obj){//obj响应数据
+						alert("支付成功");
+						//获取路径
+						var pathName=window.document.location.pathname;
+						//截取，得到项目名称
+						var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+						window.location.href = projectName;
+					},
+			        error : function() {
+			            alert("处理异常！");
+			        }
+				}	
+			);
+	}*/
+
+
+
+</script>
+</head>
+<body>
+<div th:include="reception/header"></div>
+<div class="container">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">订单提交成功</h3>
+		</div>
+		<div class="panel-body" style="text-align: center">
+			<div class="border1">
+				<form action="toPay" method="post">
+				您的订单编号为：<input th:value="${order.orderId}" name="orderId" readonly="readonly" style="margin: 5px;color: #a60401">	<br>
+				商品名称为：&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;<input th:type="text" th:value="${order.orderName}" name="orderName" readonly="readonly"  style="color: #a60401;margin: 5px;"><br>
+				送货信息：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;<input th:type="text" th:value="${addressInfo}" name="addressInfo" readonly="readonly" style="color: #a60401;margin: 5px;color: #a60401;"><br>
+				总金额：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; <input th:type="text" th:value="${order.totalPrice}" name="totalPrice" readonly="readonly" style="margin: 5px;color: #a60401;"><br>
+				<input type="submit" th:value="去支付" style="margin: 5px">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script>
+	//实现 支付功能
+	/*function pay(){
+		//获取 商品编号  商品名称  商品数量 商品总金额  提交给后台处
+			var goodsNum=$("#oid").html();
+			var goodsName=$("#gname").html();
+			var goodCount=$("#count").html();
+			var goodsPrice=$("#totalPrice").html();
+			//alert(goodsNum);
+			//发送 ajax  请求
+
+		$.post("/eBusiness/pay/toPay",{"goodsNum":goodsNum,"goodsName":goodsName,"goodCount":goodCount,"goodsPrice":goodsPrice},function(data){
+
+		});
+
+	}*/
+
+</script>
+</html>

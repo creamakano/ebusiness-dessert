@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}"><!-- 不用base就使用th:src="@{/js/jquery.min.js} -->
+    <meta charset="UTF-8">
+    <title>订单页面</title>
+    <style>
+        body{
+            background-image: url("http://localhost:8082/images/background.jpg");
+            background-size: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+    </script>
+</head>
+<body>
+<div th:include="reception/header"></div>
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">订单列表</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table table-responsive">
+                <table class="table table-bordered table-hover">
+                    <tbody class="text-center">
+                    <tr>
+                        <th>订单编号</th>
+                        <th>订单金额</th>
+                        <th>订单状态</th>
+                        <th>下单时间</th>
+                        <th>订单地址</th>
+                        <th>查看详情</th>
+                        <th>评价商品</th>
+                    </tr>
+                    <tr th:each="order:${myOrders}">
+                        <td th:text="${order.orderId}"></td>
+                        <td th:text="${order.totalPrice}"></td>
+                        <td>
+								<span th:if="${order.status} == 0">
+									未支付 &nbsp; <a th:href="@{/pay(orderId=${order.orderId},orderName=${order.orderName},totalPrice=${order.totalPrice},receiptInfo=${order.receiptInfo})}">去支付</a>
+								</span>
+                            <span th:if="${order.status} == 1">
+									已支付
+								</span>
+                        </td>
+                        <td th:text="${order.createDate}"></td>
+                        <td th:text="${order.receiptInfo}"></td>
+                        <td>
+                            <a th:href="@{/myOrderDetail(orderId=${order.orderId},status=${order.status})}">查看详情</a>
+                        </td>
+                        <td th:if="${order.status} == 1">
+                            <a th:if="${order.isComment} != 1" th:href="'/toComments?orderId=' + ${order.orderId}">评价</a>
+                            <a th:if="${order.isComment} == 1">已评价</a>
+                        </td>
+                        <td th:if="${order.status} == 0">
+                            未支付
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
